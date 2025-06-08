@@ -46,7 +46,11 @@ const CreateUser = ({ open, setOpen, scroll }) => {
     e.preventDefault();
     const { firstName, lastName, username, password, phone, email } = employeeData
     if (!firstName || !lastName || !username || !password || !phone  )
-      return alert("Make sure to provide all the fields")
+       {
+      validateAllFields();
+      return;
+      // return alert("Make sure to provide all the fields")
+    } 
     dispatch(createEmployee(employeeData, setOpen));
     setEmployeeData(initialEmployeeState)
   };
@@ -59,6 +63,36 @@ const CreateUser = ({ open, setOpen, scroll }) => {
     setOpen(false);
     setEmployeeData(initialEmployeeState)
   };
+
+  const [touched, setTouched] = useState({});
+  const [errors, setErrors] = useState({});
+
+
+  const handleBlur = (field) => {
+  setTouched((prev) => ({ ...prev, [field]: true }));
+
+    if (!employeeData[field] || employeeData[field].trim() === '') {
+      setErrors((prev) => ({ ...prev, [field]: 'This field is required' }));
+    } else {
+      setErrors((prev) => ({ ...prev, [field]: '' }));
+    }
+  };
+  const validateAllFields = () => {
+    const newErrors = {};
+    const newTouched = {};
+
+    Object.keys(initialEmployeeState).forEach((field) => {
+      newTouched[field] = true;
+      if (!employeeData[field] || employeeData[field].trim() === '') {
+        newErrors[field] = 'This field is required';
+      }
+    });
+
+    setErrors(newErrors);
+    setTouched(newTouched);
+
+  return Object.keys(newErrors).length === 0; 
+};
 
   return (
     <div>
@@ -93,6 +127,9 @@ const CreateUser = ({ open, setOpen, scroll }) => {
                     fullWidth
                     value={employeeData.firstName}
                     onChange={(e) => handleChange('firstName', e.target.value)}
+                    onBlur={() => handleBlur('firstName')}
+                    error={touched.firstName && Boolean(errors.firstName)}
+                    helperText={touched.firstName && errors.firstName}
                   />
                 </td>
               </tr>
@@ -104,6 +141,9 @@ const CreateUser = ({ open, setOpen, scroll }) => {
                     fullWidth
                     value={employeeData.lastName}
                     onChange={(e) => handleChange('lastName', e.target.value)}
+                    onBlur={() => handleBlur('lastName')}
+                    error={touched.lastName && Boolean(errors.lastName)}
+                    helperText={touched.lastName && errors.lastName}
                   />
                 </td>
               </tr>
@@ -115,6 +155,9 @@ const CreateUser = ({ open, setOpen, scroll }) => {
                     fullWidth
                     value={employeeData.username}
                     onChange={(e) => handleChange('username', e.target.value)}
+                    onBlur={() => handleBlur('username')}
+                    error={touched.lastName && Boolean(errors.username)}
+                    helperText={touched.username && errors.username}
                   />
                 </td>
               </tr>
@@ -137,6 +180,9 @@ const CreateUser = ({ open, setOpen, scroll }) => {
                     type="password"
                     value={employeeData.password}
                     onChange={(e) => handleChange("password", e.target.value)}
+                    onBlur={() => handleBlur('password')}
+                    error={touched.password && Boolean(errors.password)}
+                    helperText={touched.password && errors.password}
                     size="small"
                     fullWidth
                   />
@@ -150,6 +196,9 @@ const CreateUser = ({ open, setOpen, scroll }) => {
                     size="small"
                     value={employeeData.phone}
                     onChange={(e) => handleChange("phone", e.target.value)}
+                    onBlur={() => handleBlur('phone')}
+                    error={touched.phone && Boolean(errors.phone)}
+                    helperText={touched.phone && errors.phone}
                     fullWidth
                   />
                 </td>
